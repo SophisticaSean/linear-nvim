@@ -139,8 +139,9 @@ end
 
 --- @return table?
 function LinearClient:get_assigned_issues()
+  -- FIXME: undo "first 1"
     local query = string.format(
-        '{"query": "query { user(id: \\"%s\\") { id name assignedIssues(filter: {state: {type: {nin: [\\"completed\\", \\"canceled\\"]}}}) { nodes { id title identifier branchName description } } } }"}',
+        '{"query": "query { user(id: \\"%s\\") { id name assignedIssues(first 1 filter: {state: {type: {nin: [\\"completed\\", \\"canceled\\"]}}}) { nodes { id title identifier branchName description } } } }"}',
         self:get_user_id()
     )
     local data = self._make_query(self:fetch_api_key(), query)
@@ -179,6 +180,7 @@ function LinearClient:get_teams()
         return nil
     end
 
+    -- handle pagination, fetch all remaining pages of teams
     local morePages = hasNextPage
     local curCursor = endCursor
     while (morePages == true) do
