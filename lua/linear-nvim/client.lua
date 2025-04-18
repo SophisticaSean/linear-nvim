@@ -167,19 +167,19 @@ function LinearClient:get_teams()
 
     if data and data.data and data.data.teams and data.data.teams.nodes then
       teams = data.data.teams.nodes
-      return teams
+      -- return teams
     else
         log.error("No teams found")
         return nil
     end
 
     local allTeamsFetched = false
-    while( !allTeamsFetched )
+    while( not allTeamsFetched )
       do
-      local query = '{ "query": "query { teams(after: %s) { nodes {id name }} }" }'
-      local data = self._make_query(self:fetch_api_key(), query)
+      local subquery = '{ "query": "query { teams(after: %s) { nodes {id name }} }" }'
+      local subdata = self._make_query(self:fetch_api_key(), subquery)
 
-      if data and data.data and data.data.teams and data.data.teams.nodes then
+      if subdata and subdata.data and subdata.data.teams and subdata.data.teams.nodes then
         for _, team in ipairs(data.data.teams.nodes) do
           table.insert(teams, team)
         end
