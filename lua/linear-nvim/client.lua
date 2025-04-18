@@ -163,12 +163,12 @@ function LinearClient:get_teams()
     local query = '{"query":"query { teams(first: 50) { nodes {id name } pageInfo {hasNextPage endCursor}} }"}'
     local data = self._make_query(self:fetch_api_key(), query)
 
-    local teams = {}
+    Teams = {}
     local endCursor = ""
     local hasNextPage = false
 
     if data and data.data and data.data.teams and data.data.teams.nodes then
-      teams = data.data.teams.nodes
+      Teams = data.data.teams.nodes
       if data.data.teams.pageInfo then
         hasNextPage = data.data.teams.pageInfo.hasNextPage
         endCursor = data.data.teams.pageInfo.endCursor
@@ -189,7 +189,7 @@ function LinearClient:get_teams()
       if subdata and subdata.data and subdata.data.teams  then
         if subdata.data.teams.nodes then
           for _, team in ipairs(subdata.data.teams.nodes) do
-            teams = table.insert(teams, team)
+            Teams = table.insert(Teams, team)
           end
         end
 
@@ -202,7 +202,7 @@ function LinearClient:get_teams()
       end
       morePages = false
     end
-    return teams
+    return Teams
 end
 
 --- @param labels string[]
