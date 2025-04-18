@@ -197,6 +197,7 @@ function LinearClient:get_teams()
           endCursor = subdata.data.teams.pageInfo.endCursor
         end
       end
+      morePages = false
     end
     return teams
 end
