@@ -160,7 +160,7 @@ end
 
 --- @return table?
 function LinearClient:get_teams()
-    local query = '{"query":"query { teams(first: 10) { nodes {id name } pageInfo {hasNextPage endCursor}} }"}'
+    local query = '{"query":"query { teams(first: 50) { nodes {id name } pageInfo {hasNextPage endCursor}} }"}'
     local data = self._make_query(self:fetch_api_key(), query)
 
     local teams = {}
@@ -181,34 +181,23 @@ function LinearClient:get_teams()
 
     local morePages = hasNextPage
     local curCursor = endCursor
-    -- vim.notify(string.format("morePages is true: %s", morePages == true), vim.log.levels.ERROR)
     while (morePages == true) do
-      local subquery = string.format('{"query": "query { teams(first: 12, after: \\"%s\\") { nodes {id name }, pageInfo {hasNextPage endCursor} } }"}', curCursor)
-      -- local subquery = '{"query":"query { teams(first: 10) { nodes {id name } pageInfo {hasNextPage endCursor}} }"}'
+      -- double escaping the double quoets is very important
+      local subquery = string.format('{"query": "query { teams(first: 50, after: \\"%s\\") { nodes {id name }, pageInfo {hasNextPage endCursor} } }"}', curCursor)
       local subdata = self._make_query(self:fetch_api_key(), subquery)
 
       if subdata and subdata.data and subdata.data.teams  then
         if subdata.data.teams.nodes then
           for _, team in ipairs(subdata.data.teams.nodes) do
             table.insert(teams, team)
-            -- vim.notify(string.format("morePages is true: %s", morePages == true), vim.log.levels.ERROR)
-            -- vim.notify(string.format("team: %s", team), vim.log.levels.ERROR)
-            -- return nil
           end
         end
 
         if subdata.data.teams.pageInfo then
           morePages = subdata.data.teams.pageInfo.hasNextPage
           curCursor = subdata.data.teams.pageInfo.endCursor
-          -- vim.notify(string.format("morePages is true: %s", morePages == true), vim.log.levels.ERROR)
-          -- return nil
         end
       end
-      -- morePages = false
-      -- vim.notify(string.format("subdata: %s", subdata), vim.log.levels.ERROR)
-      -- vim.notify(string.format("query: %s", query), vim.log.levels.ERROR)
-      -- vim.notify(string.format("subquery: %s", subquery), vim.log.levels.ERROR)
-      -- return nil
     end
     return teams
 end
