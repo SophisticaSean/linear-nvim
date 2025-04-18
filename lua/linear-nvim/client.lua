@@ -176,6 +176,8 @@ function LinearClient:get_teams()
         endCursor = data.data.teams.pageInfo.endCursor
       end
       vim.notify(string.format("hasnextpage: %s", hasNextPage), vim.log.levels.ERROR)
+      log.error(string.format("hasnextpage: %s", hasNextPage))
+      return nil
       -- return teams
     else
         log.error("No teams found")
