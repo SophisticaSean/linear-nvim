@@ -195,9 +195,6 @@ function LinearClient:get_teams()
       end
 
       break
-      if hasNextPage ~= true then
-        break
-      end
     end
     return teams
 end
