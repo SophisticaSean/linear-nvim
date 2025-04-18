@@ -193,7 +193,7 @@ function LinearClient:get_teams()
           table.insert(teams, team)
         end
       end
-    until( hasNextPage == false)
+    until( hasNextPage == false )
     return teams
 end
 
