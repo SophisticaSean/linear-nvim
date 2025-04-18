@@ -184,17 +184,17 @@ function LinearClient:get_teams()
       local subdata = self._make_query(self:fetch_api_key(), subquery)
 
       if subdata and subdata.data and subdata.data.teams and subdata.data.teams.nodes then
+        for _, team in ipairs(subdata.data.teams.nodes) do
+          table.insert(teams, team)
+        end
+
         if data.data.teams.pageInfo then
           hasNextPage = subdata.data.teams.pageInfo.hasNextPage
           endCursor = subdata.data.teams.pageInfo.endCursor
         end
-
-        for _, team in ipairs(subdata.data.teams.nodes) do
-          table.insert(teams, team)
-        end
       end
 
-      if not hasNextPage then
+      if hasNextPage == false then
         break
       end
     end
