@@ -189,7 +189,7 @@ function LinearClient:get_teams()
         break
       end
 
-      local subquery = string.format('{ "query": "query { teams(first 50 after: \"%s\") { nodes {id name } pageInfo {hasNextPage endCursor} } }" }', endCursor)
+      local subquery = string.format('{ "query": "query { teams(first: 50 after: \"%s\") { nodes {id name } pageInfo {hasNextPage endCursor} } }" }', endCursor)
       local subdata = self._make_query(self:fetch_api_key(), subquery)
 
       if subdata and subdata.data and subdata.data.teams and subdata.data.teams.nodes then
