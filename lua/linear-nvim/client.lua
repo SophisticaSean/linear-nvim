@@ -164,17 +164,23 @@ function LinearClient:get_assigned_issues()
     )
     local data = self._make_query(self:fetch_api_key(), query)
 
+    local assignedIssues = {}
+    local endCursor = ""
+    local hasNextPage = false
+
     if
         data
         and data.data
         and data.data.user
         and data.data.user.assignedIssues
     then
-        return data.data.user.assignedIssues.nodes
+        assignedIssues = data.data.user.assignedIssues.nodes
     else
         log.error("Assigned issues not found in response")
         return nil
     end
+
+    return assignedIssues
 end
 
 --- @return table?
@@ -199,11 +205,9 @@ function LinearClient:get_teams()
     end
 
     -- handle pagination, fetch all remaining pages of teams
-    local morePages = hasNextPage
-    local curCursor = endCursor
-    while (morePages == true) do
-      -- double escaping the double quoets is very important
-      local subquery = string.format('{"query": "query { teams(first: 50, after: \\"%s\\") { nodes {id name }, pageInfo {hasNextPage endCursor} } }"}', curCursor)
+    while (hasNextPage == true) do
+      -- double escaping the double quotes is very important
+      local subquery = string.format('{"query": "query { teams(first: 50, after: \\"%s\\") { nodes {id name }, pageInfo {hasNextPage endCursor} } }"}', endCursor)
       local subdata = self._make_query(self:fetch_api_key(), subquery)
 
       if subdata and subdata.data and subdata.data.teams  then
@@ -213,8 +217,8 @@ function LinearClient:get_teams()
           end
         end
 
-        morePages = self._get_hasNextPage(subdata.data.teams)
-        curCursor = self._get_endCursor(subdata.data.teams)
+        hasNextPage = self._get_hasNextPage(subdata.data.teams)
+        endCursor = self._get_endCursor(subdata.data.teams)
       end
     end
     return teams
