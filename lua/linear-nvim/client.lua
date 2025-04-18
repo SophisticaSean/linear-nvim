@@ -191,7 +191,7 @@ function LinearClient:get_teams()
           teams = table.insert(teams, team)
         end
 
-        if data.data.teams.pageInfo then
+        if subdata.data.teams.pageInfo then
           morePages = subdata.data.teams.pageInfo.hasNextPage
           curCursor = subdata.data.teams.pageInfo.endCursor
           vim.notify(string.format("morePages is true: %s", morePages == true), vim.log.levels.ERROR)
