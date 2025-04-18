@@ -157,6 +157,7 @@ end
 
 --- @return table?
 function LinearClient:get_assigned_issues()
+    vim.notify("Fetching assigned issues..", vim.log.levels.INFO)
     local query = string.format(
         '{"query": "query { user(id: \\"%s\\") { id name assignedIssues(first: 50 filter: {state: {type: {nin: [\\"completed\\", \\"canceled\\"]}}}) { nodes { id title identifier branchName description } pageInfo {hasNextPage endCursor} } } }"}',
         self:get_user_id()
