@@ -175,7 +175,7 @@ function LinearClient:get_teams()
       if data.data.teams.pageInfo and data.data.teams.pageInfo.endCursor then
         endCursor = data.data.teams.pageInfo.endCursor
       end
-      log.warn(string.format("%v", hasNextPage))
+      log.warn(string.format("%s", hasNextPage))
       -- return teams
     else
         log.error("No teams found")
