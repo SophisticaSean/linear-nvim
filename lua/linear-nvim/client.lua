@@ -180,9 +180,8 @@ function LinearClient:get_teams()
     end
 
     local morePages = hasNextPage
-    log.error(string.format("morePages is true: %s", morePages ~= true))
 
-    vim.notify(string.format("morePages is true: %s", morePages ~= true), vim.log.levels.ERROR)
+    vim.notify(string.format("morePages is true: %s", morePages == true), vim.log.levels.ERROR)
     return nil
     
     -- while (morePages ~= true) do
