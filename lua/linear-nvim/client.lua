@@ -183,13 +183,16 @@ function LinearClient:get_teams()
     local curCursor = endCursor
     -- vim.notify(string.format("morePages is true: %s", morePages == true), vim.log.levels.ERROR)
     while (morePages == true) do
-      local subquery = string.format('{ "query": "query { teams(first: 50 after: \"%s\") { nodes {id name } pageInfo {hasNextPage endCursor} } }" }', curCursor)
+      local subquery = string.format('{ "query": "query { teams(first: 12 after: \"%s\") { nodes {id name } pageInfo {hasNextPage endCursor} } }" }', curCursor)
       local subdata = self._make_query(self:fetch_api_key(), subquery)
 
       if subdata and subdata.data and subdata.data.teams  then
         if subdata.data.teams.nodes then
           for _, team in ipairs(subdata.data.teams.nodes) do
             table.insert(teams, team)
+            vim.notify(string.format("morePages is true: %s", morePages == true), vim.log.levels.ERROR)
+            vim.notify(string.format("team: %s", team), vim.log.levels.ERROR)
+            return nil
           end
         end
 
@@ -201,7 +204,6 @@ function LinearClient:get_teams()
         end
       end
       morePages = false
-      return nil
     end
     return teams
 end
