@@ -185,16 +185,18 @@ function LinearClient:get_teams()
 
       if subdata and subdata.data and subdata.data.teams and subdata.data.teams.nodes then
         if data.data.teams.pageInfo then
-          hasNextPage = data.data.teams.pageInfo.hasNextPage
-          endCursor = data.data.teams.pageInfo.endCursor
+          hasNextPage = subdata.data.teams.pageInfo.hasNextPage
+          endCursor = subdata.data.teams.pageInfo.endCursor
         end
 
-        for _, team in ipairs(data.data.teams.nodes) do
+        for _, team in ipairs(subdata.data.teams.nodes) do
           table.insert(teams, team)
         end
       end
 
-      break
+      if not hasNextPage then
+        break
+      end
     end
     return teams
 end
