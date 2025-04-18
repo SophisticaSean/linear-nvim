@@ -141,7 +141,7 @@ end
 function LinearClient:get_assigned_issues()
   -- FIXME: undo "first 1"
     local query = string.format(
-        '{"query": "query { user(id: \\"%s\\") { id name assignedIssues(first 1 filter: {state: {type: {nin: [\\"completed\\", \\"canceled\\"]}}}) { nodes { id title identifier branchName description } } } }"}',
+        '{"query": "query { user(id: \\"%s\\") { id name assignedIssues(first: 1 filter: {state: {type: {nin: [\\"completed\\", \\"canceled\\"]}}}) { nodes { id title identifier branchName description } } } }"}',
         self:get_user_id()
     )
     local data = self._make_query(self:fetch_api_key(), query)
