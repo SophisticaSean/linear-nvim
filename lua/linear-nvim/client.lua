@@ -186,9 +186,11 @@ function LinearClient:get_teams()
       local subquery = string.format('{ "query": "query { teams(first: 50 after: \"%s\") { nodes {id name } pageInfo {hasNextPage endCursor} } }" }', curCursor)
       local subdata = self._make_query(self:fetch_api_key(), subquery)
 
-      if subdata and subdata.data and subdata.data.teams and subdata.data.teams.nodes then
-        for _, team in ipairs(subdata.data.teams.nodes) do
-          teams = table.insert(teams, team)
+      if subdata and subdata.data and subdata.data.teams  then
+        if subdata.data.teams.nodes then
+          for _, team in ipairs(subdata.data.teams.nodes) do
+            teams = table.insert(teams, team)
+          end
         end
 
         if subdata.data.teams.pageInfo then
@@ -198,7 +200,7 @@ function LinearClient:get_teams()
           return nil
         end
       end
-      -- morePages = false
+      morePages = false
     end
     return teams
 end
