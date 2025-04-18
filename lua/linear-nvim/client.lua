@@ -188,11 +188,12 @@ function LinearClient:get_assigned_issues()
     while (hasNextPage == true) do
       -- double escaping the double quotes is very important
       local subquery = string.format(
-      '{"query": "query { user(id: \\"%s\\") { id name assignedIssues(first: 4 after: \\"%s\\" filter: {state: {type: {nin: [\\"completed\\", \\"canceled\\"]}}}) { nodes { id title identifier branchName description } pageInfo {hasNextPage endCursor} } } }"}',
+      '{"query": "query { user(id: \\"%s\\") { id name assignedIssues(first: 1 after: \\"%s\\" filter: {state: {type: {nin: [\\"completed\\", \\"canceled\\"]}}}) { nodes { id title identifier branchName description } pageInfo {hasNextPage endCursor} } } }"}',
       self:get_user_id(),
       endCursor
       )
       local subdata = self._make_query(self:fetch_api_key(), subquery)
+      vim.notify(string.format("look: %s", subdata), vim.log.levels.ERROR)
 
         if
           subdata
@@ -203,10 +204,9 @@ function LinearClient:get_assigned_issues()
           for _, issue in ipairs(subdata.data.user.assignedIssues) do
             table.insert(assignedIssues, issue)
           end
+          hasNextPage = self._get_hasNextPage(subdata.data.user.assignedIssues)
+          endCursor = self._get_endCursor(subdata.data.user.assignedIssues)
         end
-
-        hasNextPage = self._get_hasNextPage(subdata.data.user.assignedIssues)
-        endCursor = self._get_endCursor(subdata.data.user.assignedIssues)
     end
 
     return assignedIssues
