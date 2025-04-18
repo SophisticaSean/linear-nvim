@@ -196,11 +196,12 @@ function LinearClient:get_teams()
         if subdata.data.teams.pageInfo then
           morePages = subdata.data.teams.pageInfo.hasNextPage
           curCursor = subdata.data.teams.pageInfo.endCursor
-          vim.notify(string.format("morePages is true: %s", morePages == true), vim.log.levels.ERROR)
-          return nil
+          -- vim.notify(string.format("morePages is true: %s", morePages == true), vim.log.levels.ERROR)
+          -- return nil
         end
       end
       morePages = false
+      return teams
     end
     return teams
 end
