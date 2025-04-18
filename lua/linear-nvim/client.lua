@@ -159,7 +159,7 @@ end
 function LinearClient:get_assigned_issues()
     vim.notify("Fetching assigned issues..", vim.log.levels.INFO)
     local query = string.format(
-        '{"query": "query { user(id: \\"%s\\") { id name assignedIssues(first: 1 filter: {state: {type: {nin: [\\"completed\\", \\"canceled\\"]}}}) { nodes { id title identifier branchName description } pageInfo {hasNextPage endCursor} } } }"}',
+        '{"query": "query { user(id: \\"%s\\") { id name assignedIssues(first: 50 filter: {state: {type: {nin: [\\"completed\\", \\"canceled\\"]}}}) { nodes { id title identifier branchName description } pageInfo {hasNextPage endCursor} } } }"}',
         self:get_user_id()
     )
     local data = self._make_query(self:fetch_api_key(), query)
@@ -188,7 +188,7 @@ function LinearClient:get_assigned_issues()
     while (hasNextPage == true) do
       -- double escaping the double quotes is very important
       local subquery = string.format(
-      '{"query": "query { user(id: \\"%s\\") { id name assignedIssues(first: 1 after: \\"%s\\" filter: {state: {type: {nin: [\\"completed\\", \\"canceled\\"]}}}) { nodes { id title identifier branchName description } pageInfo {hasNextPage endCursor} } } }"}',
+      '{"query": "query { user(id: \\"%s\\") { id name assignedIssues(first: 50 after: \\"%s\\" filter: {state: {type: {nin: [\\"completed\\", \\"canceled\\"]}}}) { nodes { id title identifier branchName description } pageInfo {hasNextPage endCursor} } } }"}',
       self:get_user_id(),
       endCursor
       )
