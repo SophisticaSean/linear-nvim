@@ -185,6 +185,7 @@ function LinearClient:get_teams()
     while( not allTeamsFetched )
       do
       log.error(allTeamsFetched)
+      break
       if not hasNextPage then
         allTeamsFetched = true
         break
