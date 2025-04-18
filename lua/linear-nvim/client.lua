@@ -41,6 +41,24 @@ LinearClient._make_query = function(api_key, query)
     return data
 end
 
+--- @param data table
+--- @return boolean
+LinearClient._get_hasNextPage = function(data)
+  if data.pageInfo then
+    return data.pageInfo.hasNextPage
+  end
+  return false
+end
+
+--- @param data table
+--- @return string
+LinearClient._get_endCursor = function(data)
+  if data.pageInfo then
+    return data.pageInfo.endCursor
+  end
+  return ""
+end
+
 --- @param callback_for_api_key function
 --- @param issue_fields string[]
 --- @param default_labels? string[]
@@ -161,7 +179,7 @@ end
 
 --- @return table?
 function LinearClient:get_teams()
-    local query = '{"query":"query { teams(first: 50) { nodes {id name } pageInfo {hasNextPage endCursor}} }"}'
+    local query = '{"query":"query { teams(first: 5) { nodes {id name } pageInfo {hasNextPage endCursor}} }"}'
     local data = self._make_query(self:fetch_api_key(), query)
 
     local teams = {}
@@ -173,6 +191,8 @@ function LinearClient:get_teams()
       if data.data.teams.pageInfo then
         hasNextPage = data.data.teams.pageInfo.hasNextPage
         endCursor = data.data.teams.pageInfo.endCursor
+        hasNextPage = self._get_hasNextPage(data.data.teams)
+        endCursor = self._get_endCursor(data.data.teams)
       end
       -- return teams
     else
@@ -185,7 +205,7 @@ function LinearClient:get_teams()
     local curCursor = endCursor
     while (morePages == true) do
       -- double escaping the double quoets is very important
-      local subquery = string.format('{"query": "query { teams(first: 50, after: \\"%s\\") { nodes {id name }, pageInfo {hasNextPage endCursor} } }"}', curCursor)
+      local subquery = string.format('{"query": "query { teams(first: 5, after: \\"%s\\") { nodes {id name }, pageInfo {hasNextPage endCursor} } }"}', curCursor)
       local subdata = self._make_query(self:fetch_api_key(), subquery)
 
       if subdata and subdata.data and subdata.data.teams  then
@@ -195,10 +215,8 @@ function LinearClient:get_teams()
           end
         end
 
-        if subdata.data.teams.pageInfo then
-          morePages = subdata.data.teams.pageInfo.hasNextPage
-          curCursor = subdata.data.teams.pageInfo.endCursor
-        end
+        morePages = self._get_hasNextPage(subdata.data.teams)
+        curCursor = self._get_endCursor(subdata.data.teams)
       end
     end
     return teams
