@@ -183,7 +183,8 @@ function LinearClient:get_teams()
     local curCursor = endCursor
     -- vim.notify(string.format("morePages is true: %s", morePages == true), vim.log.levels.ERROR)
     while (morePages == true) do
-      local subquery = string.format('{ "query": "query { teams(first: 12 after: \"%s\") { nodes {id name } pageInfo {hasNextPage endCursor} } }" }', curCursor)
+      -- local subquery = string.format('{ "query": "query { teams(first: 12 after: \"%s\") { nodes {id name } pageInfo {hasNextPage endCursor} } }" }', curCursor)
+      local subquery = '{"query":"query { teams(first: 10) { nodes {id name } pageInfo {hasNextPage endCursor}} }"}'
       local subdata = self._make_query(self:fetch_api_key(), subquery)
 
       if subdata and subdata.data and subdata.data.teams  then
