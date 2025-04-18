@@ -185,7 +185,7 @@ function LinearClient:get_teams()
 
       if subdata and subdata.data and subdata.data.teams and subdata.data.teams.nodes then
         for _, team in ipairs(subdata.data.teams.nodes) do
-          table.insert(teams, team)
+          teams = table.insert(teams, team)
         end
 
         if data.data.teams.pageInfo then
@@ -194,6 +194,7 @@ function LinearClient:get_teams()
         end
       end
 
+      break
       if hasNextPage ~= true then
         break
       end
