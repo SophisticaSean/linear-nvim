@@ -179,7 +179,7 @@ function LinearClient:get_teams()
         return nil
     end
 
-    repeat
+    while true do
       local subquery = string.format('{ "query": "query { teams(first: 50 after: \"%s\") { nodes {id name } pageInfo {hasNextPage endCursor} } }" }', endCursor)
       local subdata = self._make_query(self:fetch_api_key(), subquery)
 
@@ -193,7 +193,11 @@ function LinearClient:get_teams()
           table.insert(teams, team)
         end
       end
-    until( hasNextPage == false )
+
+      if hasNextPage == false then
+        break
+      end
+    end
     return teams
 end
 
