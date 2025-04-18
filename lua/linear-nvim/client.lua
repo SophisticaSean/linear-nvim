@@ -201,7 +201,7 @@ function LinearClient:get_teams()
         end
       end
       morePages = false
-      return teams
+      return nil
     end
     return teams
 end
