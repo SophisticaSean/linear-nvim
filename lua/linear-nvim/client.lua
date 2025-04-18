@@ -200,6 +200,10 @@ function LinearClient:get_teams()
           table.insert(teams, team)
         end
       end
+
+      if not hasNextPage then
+        break
+      end
     end
     return teams
 end
