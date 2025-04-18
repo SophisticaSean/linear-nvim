@@ -179,8 +179,8 @@ function LinearClient:get_teams()
         return nil
     end
 
-    local shouldBreak = false
-    while (shouldBreak ~= false) do
+    local morePages = hasNextPage
+    while (morePages ~= true) do
       local subquery = string.format('{ "query": "query { teams(first: 50 after: \"%s\") { nodes {id name } pageInfo {hasNextPage endCursor} } }" }', endCursor)
       local subdata = self._make_query(self:fetch_api_key(), subquery)
 
@@ -190,10 +190,7 @@ function LinearClient:get_teams()
         end
 
         if data.data.teams.pageInfo then
-          hasNextPage = subdata.data.teams.pageInfo.hasNextPage
-          if hasNextPage ~= true then
-            shouldBreak = true
-          end
+          morePages = subdata.data.teams.pageInfo.hasNextPage
           endCursor = subdata.data.teams.pageInfo.endCursor
         end
       end
