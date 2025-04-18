@@ -169,10 +169,8 @@ function LinearClient:get_teams()
 
     if data and data.data and data.data.teams and data.data.teams.nodes then
       teams = data.data.teams.nodes
-      if data.data.teams.pageInfo and data.data.teams.pageInfo.hasNextPage then
+      if data.data.teams.pageInfo then
         hasNextPage = data.data.teams.pageInfo.hasNextPage
-      end
-      if data.data.teams.pageInfo and data.data.teams.pageInfo.endCursor then
         endCursor = data.data.teams.pageInfo.endCursor
       end
       -- return teams
@@ -188,11 +186,8 @@ function LinearClient:get_teams()
       local subdata = self._make_query(self:fetch_api_key(), subquery)
 
       if subdata and subdata.data and subdata.data.teams and subdata.data.teams.nodes then
-        if data.data.teams.pageInfo and data.data.teams.pageInfo.hasNextPage then
+        if data.data.teams.pageInfo then
           hasNextPage = data.data.teams.pageInfo.hasNextPage
-        end
-
-        if data.data.teams.pageInfo and data.data.teams.pageInfo.endCursor then
           endCursor = data.data.teams.pageInfo.endCursor
         end
 
