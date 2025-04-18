@@ -179,7 +179,7 @@ end
 
 --- @return table?
 function LinearClient:get_teams()
-    local query = '{"query":"query { teams(first: 5) { nodes {id name } pageInfo {hasNextPage endCursor}} }"}'
+    local query = '{"query":"query { teams(first: 50) { nodes {id name } pageInfo {hasNextPage endCursor}} }"}'
     local data = self._make_query(self:fetch_api_key(), query)
 
     local teams = {}
@@ -189,8 +189,6 @@ function LinearClient:get_teams()
     if data and data.data and data.data.teams and data.data.teams.nodes then
       teams = data.data.teams.nodes
       if data.data.teams.pageInfo then
-        hasNextPage = data.data.teams.pageInfo.hasNextPage
-        endCursor = data.data.teams.pageInfo.endCursor
         hasNextPage = self._get_hasNextPage(data.data.teams)
         endCursor = self._get_endCursor(data.data.teams)
       end
@@ -205,7 +203,7 @@ function LinearClient:get_teams()
     local curCursor = endCursor
     while (morePages == true) do
       -- double escaping the double quoets is very important
-      local subquery = string.format('{"query": "query { teams(first: 5, after: \\"%s\\") { nodes {id name }, pageInfo {hasNextPage endCursor} } }"}', curCursor)
+      local subquery = string.format('{"query": "query { teams(first: 50, after: \\"%s\\") { nodes {id name }, pageInfo {hasNextPage endCursor} } }"}', curCursor)
       local subdata = self._make_query(self:fetch_api_key(), subquery)
 
       if subdata and subdata.data and subdata.data.teams  then
