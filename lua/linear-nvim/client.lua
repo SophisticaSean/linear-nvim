@@ -184,31 +184,6 @@ function LinearClient:get_assigned_issues()
         return nil
     end
 
-    -- handle pagination, fetch all remaining pages of assignedIssues
-    while (hasNextPage == true) do
-      -- double escaping the double quotes is very important
-      local subquery = string.format(
-      '{"query": "query { user(id: \\"%s\\") { id name assignedIssues(first: 4 after: \\"%s\\" filter: {state: {type: {nin: [\\"completed\\", \\"canceled\\"]}}}) { nodes { id title identifier branchName description } pageInfo {hasNextPage endCursor} } } }"}',
-      self:get_user_id(),
-      endCursor
-      )
-      local subdata = self._make_query(self:fetch_api_key(), subquery)
-
-        if
-          subdata
-          and subdata.data
-          and subdata.data.user
-          and subdata.data.user.assignedIssues
-        then
-          for _, issue in ipairs(subdata.data.user.assignedIssues) do
-            table.insert(assignedIssues, issue)
-          end
-        end
-
-        hasNextPage = self._get_hasNextPage(data.data.user.assignedIssues)
-        endCursor = self._get_endCursor(data.data.user.assignedIssues)
-    end
-
     return assignedIssues
 end
 
