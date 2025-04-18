@@ -193,7 +193,7 @@ function LinearClient:get_assigned_issues()
       endCursor
       )
       local subdata = self._make_query(self:fetch_api_key(), subquery)
-      vim.notify(string.format("look: %s", subdata), vim.log.levels.ERROR)
+      -- vim.notify(string.format("look: %s", subdata), vim.log.levels.ERROR)
 
         if
           subdata
@@ -201,7 +201,7 @@ function LinearClient:get_assigned_issues()
           and subdata.data.user
           and subdata.data.user.assignedIssues
         then
-          for _, issue in ipairs(subdata.data.user.assignedIssues) do
+          for _, issue in ipairs(subdata.data.user.assignedIssues.nodes) do
             table.insert(assignedIssues, issue)
           end
           hasNextPage = self._get_hasNextPage(subdata.data.user.assignedIssues)
