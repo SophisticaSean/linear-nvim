@@ -160,7 +160,7 @@ end
 
 --- @return table?
 function LinearClient:get_teams()
-    local query = '{"query":"query { teams { nodes {id name } pageInfo {hasNextPage endCursor}} }"}'
+    local query = '{"query":"query { teams(first: 50) { nodes {id name } pageInfo {hasNextPage endCursor}} }"}'
     local data = self._make_query(self:fetch_api_key(), query)
 
     local teams = {}
