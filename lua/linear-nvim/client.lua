@@ -160,13 +160,21 @@ end
 
 --- @return table?
 function LinearClient:get_teams()
-    local query = '{ "query": "query { teams { nodes {id name }} }" }'
+    local query = '{"query":"query { teams { nodes {id name } pageInfo {hasNextPage endCursor}} }"}'
     local data = self._make_query(self:fetch_api_key(), query)
 
     local teams = {}
+    local endCursor = ""
+    local hasNextPage = ""
 
     if data and data.data and data.data.teams and data.data.teams.nodes then
       teams = data.data.teams.nodes
+      if data.data.teams.pageInfo and data.data.teams.pageInfo.hasNextPage then
+        hasNextPage = data.data.teams.pageInfo.hasNextPage
+      end
+      if data.data.teams.pageInfo and data.data.teams.pageInfo.endCursor then
+        endCursor = data.data.teams.pageInfo.endCursor
+      end
       -- return teams
     else
         log.error("No teams found")
@@ -176,15 +184,27 @@ function LinearClient:get_teams()
     local allTeamsFetched = false
     while( not allTeamsFetched )
       do
-      local subquery = '{ "query": "query { teams(after: %s) { nodes {id name }} }" }'
+      if not hasNextPage then
+        allTeamsFetched = true
+        break
+      end
+
+      local subquery = string.format('{ "query": "query { teams(first 50 after: \"%s\") { nodes {id name } pageInfo {hasNextPage endCursor} } }" }', endCursor)
       local subdata = self._make_query(self:fetch_api_key(), subquery)
 
       if subdata and subdata.data and subdata.data.teams and subdata.data.teams.nodes then
+        if data.data.teams.pageInfo and data.data.teams.pageInfo.hasNextPage then
+          hasNextPage = data.data.teams.pageInfo.hasNextPage
+        end
+
+        if data.data.teams.pageInfo and data.data.teams.pageInfo.endCursor then
+          endCursor = data.data.teams.pageInfo.endCursor
+        end
+
         for _, team in ipairs(data.data.teams.nodes) do
           table.insert(teams, team)
         end
       end
-      allTeamsFetched = true
     end
     return teams
 end
