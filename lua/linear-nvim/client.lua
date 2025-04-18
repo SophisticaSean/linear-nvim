@@ -206,6 +206,8 @@ function LinearClient:get_teams()
       end
       morePages = false
       vim.notify(string.format("subdata: %s", subdata), vim.log.levels.ERROR)
+      vim.notify(string.format("query: %s", query), vim.log.levels.ERROR)
+      vim.notify(string.format("subquery: %s", subquery), vim.log.levels.ERROR)
       return nil
     end
     return teams
