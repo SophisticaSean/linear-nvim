@@ -175,7 +175,7 @@ function LinearClient:get_teams()
       if data.data.teams.pageInfo and data.data.teams.pageInfo.endCursor then
         endCursor = data.data.teams.pageInfo.endCursor
       end
-      log.error(string.format("%v", hasNextPage))
+      log.warn(string.format("%v", hasNextPage))
       -- return teams
     else
         log.error("No teams found")
@@ -183,33 +183,33 @@ function LinearClient:get_teams()
     end
 
     local allTeamsFetched = false
-    while( not allTeamsFetched )
-      do
-      log.error(allTeamsFetched)
-      allTeamsFetched = true
-
-      if not hasNextPage then
-        allTeamsFetched = true
-        break
-      end
-
-      local subquery = string.format('{ "query": "query { teams(first: 50 after: \"%s\") { nodes {id name } pageInfo {hasNextPage endCursor} } }" }', endCursor)
-      local subdata = self._make_query(self:fetch_api_key(), subquery)
-
-      if subdata and subdata.data and subdata.data.teams and subdata.data.teams.nodes then
-        if data.data.teams.pageInfo and data.data.teams.pageInfo.hasNextPage then
-          hasNextPage = data.data.teams.pageInfo.hasNextPage
-        end
-
-        if data.data.teams.pageInfo and data.data.teams.pageInfo.endCursor then
-          endCursor = data.data.teams.pageInfo.endCursor
-        end
-
-        for _, team in ipairs(data.data.teams.nodes) do
-          table.insert(teams, team)
-        end
-      end
-    end
+    -- while( not allTeamsFetched )
+    --   do
+    --   log.error(allTeamsFetched)
+    --   allTeamsFetched = true
+    --
+    --   if not hasNextPage then
+    --     allTeamsFetched = true
+    --     break
+    --   end
+    --
+    --   local subquery = string.format('{ "query": "query { teams(first: 50 after: \"%s\") { nodes {id name } pageInfo {hasNextPage endCursor} } }" }', endCursor)
+    --   local subdata = self._make_query(self:fetch_api_key(), subquery)
+    --
+    --   if subdata and subdata.data and subdata.data.teams and subdata.data.teams.nodes then
+    --     if data.data.teams.pageInfo and data.data.teams.pageInfo.hasNextPage then
+    --       hasNextPage = data.data.teams.pageInfo.hasNextPage
+    --     end
+    --
+    --     if data.data.teams.pageInfo and data.data.teams.pageInfo.endCursor then
+    --       endCursor = data.data.teams.pageInfo.endCursor
+    --     end
+    --
+    --     for _, team in ipairs(data.data.teams.nodes) do
+    --       table.insert(teams, team)
+    --     end
+    --   end
+    -- end
     return teams
 end
 
