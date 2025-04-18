@@ -158,11 +158,13 @@ end
 --- @return table?
 function LinearClient:get_assigned_issues()
     vim.notify("Fetching assigned issues..", vim.log.levels.INFO)
+    local user_id = self:get_user_id()
+    local api_key = self:fetch_api_key()
     local query = string.format(
         '{"query": "query { user(id: \\"%s\\") { id name assignedIssues(first: 50 filter: {state: {type: {nin: [\\"completed\\", \\"canceled\\"]}}}) { nodes { id title identifier branchName description } pageInfo {hasNextPage endCursor} } } }"}',
-        self:get_user_id()
+        user_id
     )
-    local data = self._make_query(self:fetch_api_key(), query)
+    local data = self._make_query(api_key, query)
 
     local assignedIssues = {}
     local endCursor = ""
@@ -189,10 +191,10 @@ function LinearClient:get_assigned_issues()
       -- double escaping the double quotes is very important
       local subquery = string.format(
       '{"query": "query { user(id: \\"%s\\") { id name assignedIssues(first: 50 after: \\"%s\\" filter: {state: {type: {nin: [\\"completed\\", \\"canceled\\"]}}}) { nodes { id title identifier branchName description } pageInfo {hasNextPage endCursor} } } }"}',
-      self:get_user_id(),
+      user_id,
       endCursor
       )
-      local subdata = self._make_query(self:fetch_api_key(), subquery)
+      local subdata = self._make_query(api_key, subquery)
       -- vim.notify(string.format("look: %s", subdata), vim.log.levels.ERROR)
 
         if
@@ -215,7 +217,8 @@ end
 --- @return table?
 function LinearClient:get_teams()
     local query = '{"query":"query { teams(first: 50) { nodes {id name } pageInfo {hasNextPage endCursor}} }"}'
-    local data = self._make_query(self:fetch_api_key(), query)
+    local api_key = self:fetch_api_key()
+    local data = self._make_query(api_key, query)
 
     local teams = {}
     local endCursor = ""
@@ -236,7 +239,7 @@ function LinearClient:get_teams()
     while (hasNextPage == true) do
       -- double escaping the double quotes is very important
       local subquery = string.format('{"query": "query { teams(first: 50, after: \\"%s\\") { nodes {id name }, pageInfo {hasNextPage endCursor} } }"}', endCursor)
-      local subdata = self._make_query(self:fetch_api_key(), subquery)
+      local subdata = self._make_query(api_key, subquery)
 
       if subdata and subdata.data and subdata.data.teams  then
         if subdata.data.teams.nodes then
