@@ -175,6 +175,7 @@ function LinearClient:get_teams()
       if data.data.teams.pageInfo and data.data.teams.pageInfo.endCursor then
         endCursor = data.data.teams.pageInfo.endCursor
       end
+      log.error(string.format("%v", hasNextPage))
       -- return teams
     else
         log.error("No teams found")
@@ -185,7 +186,8 @@ function LinearClient:get_teams()
     while( not allTeamsFetched )
       do
       log.error(allTeamsFetched)
-      break
+      allTeamsFetched = true
+
       if not hasNextPage then
         allTeamsFetched = true
         break
