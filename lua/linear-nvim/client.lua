@@ -194,7 +194,7 @@ function LinearClient:get_teams()
         end
       end
 
-      break
+      return teams
     end
     return teams
 end
