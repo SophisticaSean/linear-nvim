@@ -181,19 +181,22 @@ function LinearClient:get_teams()
 
     local morePages = hasNextPage
     while (morePages ~= true) do
-      local subquery = string.format('{ "query": "query { teams(first: 50 after: \"%s\") { nodes {id name } pageInfo {hasNextPage endCursor} } }" }', endCursor)
-      local subdata = self._make_query(self:fetch_api_key(), subquery)
+      log.error("No teams found")
+      return nil
 
-      if subdata and subdata.data and subdata.data.teams and subdata.data.teams.nodes then
-        for _, team in ipairs(subdata.data.teams.nodes) do
-          teams = table.insert(teams, team)
-        end
-
-        if data.data.teams.pageInfo then
-          morePages = subdata.data.teams.pageInfo.hasNextPage
-          endCursor = subdata.data.teams.pageInfo.endCursor
-        end
-      end
+      -- local subquery = string.format('{ "query": "query { teams(first: 50 after: \"%s\") { nodes {id name } pageInfo {hasNextPage endCursor} } }" }', endCursor)
+      -- local subdata = self._make_query(self:fetch_api_key(), subquery)
+      --
+      -- if subdata and subdata.data and subdata.data.teams and subdata.data.teams.nodes then
+      --   for _, team in ipairs(subdata.data.teams.nodes) do
+      --     teams = table.insert(teams, team)
+      --   end
+      --
+      --   if data.data.teams.pageInfo then
+      --     morePages = subdata.data.teams.pageInfo.hasNextPage
+      --     endCursor = subdata.data.teams.pageInfo.endCursor
+      --   end
+      -- end
     end
     return teams
 end
